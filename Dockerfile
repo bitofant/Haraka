@@ -1,3 +1,23 @@
+# FROM nikolaik/python-nodejs:latest
+# LABEL maintainer="JTesse <tesse@informatik.uni-hamburg.de>"
+
+# ARG PORT=25
+# ARG HOSTS=haraka.local
+# ARG FORWARD_TO=sample@haraka.local
+
+# ENV HOME /root
+
+# EXPOSE ${PORT}
+
+# WORKDIR $HOME
+# COPY . $HOME
+# RUN cd $HOME
+# RUN node setup.js
+# RUN NODE_ENV=development npm install
+# ENV NODE_ENV=production
+# CMD ["node","haraka.js"]
+
+
 # NOTICE: This is user-contributed and not officially supported by the Haraka team. Use at your own risk.
 #
 # This file describes how to build Haraka into a runnable linux container with all dependencies installed
@@ -38,6 +58,12 @@ RUN npm install -g Haraka --unsafe
 RUN haraka -i /usr/local/haraka
 ADD ./config/host_list /usr/local/haraka/config/host_list
 ADD ./config/plugins /usr/local/haraka/config/plugins
+
+ARG HOSTS=haraka.local
+ARG FORWARD_TO=sample@haraka.local
+ADD ./setup.js /usr/local/haraka/setup.js
+RUN node /usr/local/haraka/setup.js
+
 RUN cd /usr/local/haraka && npm install
 
 # Create haraka runit service
